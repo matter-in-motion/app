@@ -1,0 +1,37 @@
+{
+  "name": "@matter-in-motion/app",
+  "version": "1.0.0",
+  "description": "Generic App. Has settings. Loads extensions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matter-in-motion/app.git"
+  },
+  "keywords": [
+    "app",
+    "matter",
+    "motion",
+    "framework",
+    "generic",
+    "extensions",
+    "matter-in-motion"
+  ],
+  "author": "Alexey Novikov <v@2dubs.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matter-in-motion/app/issues"
+  },
+  "homepage": "https://github.com/matter-in-motion/app#readme",
+  "dependencies": {
+    "async-hooks": "^1.2.0",
+    "try-require": "^1.2.1",
+    "units": "^5.1.0"
+  },
+  "devDependencies": {
+    "ava": "^2.2.0",
+    "nyc": "^14.1.1"
+  }
+}
