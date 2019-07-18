@@ -159,6 +159,34 @@ test('extends the app class the checks the run order', async t => {
   await app.stop();
 })
 
+test('calls the unit method', async t => {
+  class Unit {
+    init({ app, unit }) {
+      t.truthy(app);
+      t.is(unit, this);
+    }
+
+    testSync(arg1) {
+      t.is(arg1, 1);
+      return 1;
+    }
+
+    testAsync(arg1) {
+      t.is(arg1, 2);
+      return Promise.resolve(2);
+    }
+  }
+
+  const app = new App();
+  app.add('unit', new Unit());
+  await app.start();
+
+  const syncRes = await app.call('unit.testSync', 1);
+  t.is(syncRes, 1);
+  const asyncRes = await app.call('unit.testAsync', 2);
+  t.is(asyncRes, 2);
+});
+
 // test('checks the console mode', async t => {
 //   const app = new App({ test: 'test' });
 //   await app.console();

@@ -28,6 +28,12 @@ Return the units with the 'name'. If unit doesn't exists throw an error.
 
 Adds units to your app.
 
+#### call(command, ...args)
+
+Calls the method of the unit with `args`. Example:
+
+`app.call('unit.method', 'arg1', 'arg2');`
+
 ### Life cycle
 
 All the hooks can be asyncronious. Just return a `Promise`.

@@ -24,13 +24,13 @@ class App extends EventEmitter {
     const { extensions, extensionPrefix } = this.require('settings');
     this.loadExtensions(extensions, extensionPrefix);
 
-    hooks(this, 'init', 'start', 'stop', 'run');
+    hooks(this, 'init', 'start', 'stop', 'call');
   }
 
   init() {} // for subclasses to implement
 
   setEnvironment(env) {
-    this.setEnvironment(env) { = env;
+    this.environment = env;
     return this;
   }
 
@@ -63,8 +63,12 @@ class App extends EventEmitter {
     return this.units.require(name);
   }
 
-  run() {
-    return this;
+  call(command, ...args) {
+    const parts = command.split('.');
+    const cmdName = parts.pop();
+    const unitName = parts.join('.');
+    const unit = this.require(unitName);
+    return unit[cmdName](...args);
   }
 
   loadExtensions(extensions = [], prefix = '') {
