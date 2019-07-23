@@ -11,13 +11,10 @@
     "url": "git+https://github.com/matter-in-motion/app.git"
   },
   "keywords": [
+    "matter-in-motion",
     "app",
-    "matter",
-    "motion",
-    "framework",
     "generic",
-    "extensions",
-    "matter-in-motion"
+    "extensions"
   ],
   "author": "Alexey Novikov <v@2dubs.com>",
   "license": "MIT",
