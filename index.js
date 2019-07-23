@@ -6,7 +6,7 @@ const hooks = require('async-hooks');
 const Settings = require('./settings');
 
 class App extends EventEmitter {
-  constructor(settings, env = process.env.NODE_ENV) {
+  constructor(settings, env = process.env.NODE_ENV || 'development') {
     super();
 
     this.inited = false;
