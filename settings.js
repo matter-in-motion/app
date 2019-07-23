@@ -12,9 +12,9 @@ class Settings {
 
   init({ app }) {
     this.path = app.path;
-    const settings = require(path.join(this.path.root, 'settings'));
-    // to prevent apply itself
-    if (settings !== Settings) {
+    const settings = tryRequire(path.join(this.path.root, 'settings'));
+    // to prevent apply it itself
+    if (settings && settings !== Settings) {
       this.apply(settings);
     }
 
