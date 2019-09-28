@@ -5,6 +5,7 @@ class Settings {
   constructor(settings = {}) {
     this.initRequired = true;
     this.instance = {
+      extensionPrefix: '@matter-in-motion/',
       ...settings,
       require: name => this.require(name)
     };
@@ -13,7 +14,7 @@ class Settings {
   init({ app }) {
     this.path = app.path;
     const settings = tryRequire(path.join(this.path.root, 'settings'));
-    // to prevent apply it itself
+    // to prevent applying it to itself
     if (settings && settings !== Settings) {
       this.apply(settings);
     }
