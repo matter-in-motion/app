@@ -1,13 +1,18 @@
+'use strict';
 const path = require('path');
+const assert = require('assert');
 const EventEmitter = require('events');
 const Units = require('units');
 const hooks = require('async-hooks');
 
+const Tree = require('./tree');
 const Settings = require('./settings');
 
-class App extends EventEmitter {
+class App {
   constructor(settings, env = process.env.NODE_ENV || 'development') {
-    super();
+    this.startTimestamp = Date.now();
+    this.root = new Tree();
+    this.handlers = new EventEmitter();
 
     this.inited = false;
     this.units = new Units({
@@ -18,13 +23,63 @@ class App extends EventEmitter {
     this.path = {
       root: process.cwd(),
       modules: path.join(process.cwd(), 'node_modules')
-    }
+    };
 
     this.setEnvironment(env);
     const { extensions, extensionPrefix } = this.require('settings');
     this.loadExtensions(extensions, extensionPrefix);
 
     hooks(this, 'init', 'start', 'stop', 'call');
+  }
+
+  emit(path, ...args) {
+    const { id, params } = this.root.get(path);
+    if (id) {
+      this.handlers.emit(id, ...args, params);
+    }
+  }
+
+  on(prefixes, path, handler) {
+    if (typeof prefixes === 'string') {
+      handler = path;
+      path = prefixes;
+    } else {
+      prefixes.forEach(prefix => this.on(`${prefix}${path}`, handler));
+      return;
+    }
+
+    assert(
+      typeof handler === 'function',
+      `Handler should be a function but got ${handler}`
+    );
+
+    const { id } = this.root.add(path);
+    this.handlers.on(id, handler);
+    return this;
+  }
+
+  off(prefixes, path, handler) {
+    if (typeof prefixes === 'string') {
+      handler = path;
+      path = prefixes;
+    } else {
+      prefixes.forEach(prefix => this.off(`${prefix}${path}`, handler));
+      return;
+    }
+
+    assert(
+      typeof handler === 'function',
+      `Handler should be a function but got ${handler}`
+    );
+
+    const id = this.root.id(path);
+    this.handlers.off(id, handler);
+
+    if (!this.handlers.listenerCount(id)) {
+      this.root.remove(path);
+    }
+
+    return this;
   }
 
   init() {} // for subclasses to implement
@@ -46,11 +101,11 @@ class App extends EventEmitter {
 
   async start() {
     await this.ensureInited();
-    this.emit('start');
+    this.emit('app/started');
   }
 
   stop() {
-    this.emit('stop');
+    this.emit('app/stopped');
     return this;
   }
 
@@ -72,18 +127,21 @@ class App extends EventEmitter {
   }
 
   loadExtensions(extensions = [], prefix = '') {
-    const modulesPath = this.path.modules;
     extensions.forEach(extension => {
       if (typeof extension === 'string') {
-        extension = require(path.join(modulesPath, prefix + extension));
+        extension = this.loadModule(prefix + extension);
       }
 
-      const units = typeof extension === 'function' ?
-        extension(this) : extension;
+      const units =
+        typeof extension === 'function' ? extension(this) : extension;
 
       units && this.units.add(units);
     });
     return this;
+  }
+
+  loadModule(name) {
+    return require(path.join(this.path.modules, name));
   }
 
   setDefaults() {
@@ -94,7 +152,7 @@ class App extends EventEmitter {
 
     const units = this.units;
     for (const name in defaults) {
-      units.alias(name, defaults[name])
+      units.alias(name, defaults[name]);
     }
   }
 
@@ -109,16 +167,14 @@ class App extends EventEmitter {
     await this.ensureInited();
 
     return new Promise(resolve => {
-      const r = repl
-        .start()
-        .on('exit', resolve);
+      const r = repl.start().on('exit', resolve);
 
       Object.defineProperty(r.context, 'app', {
         configurable: false,
         enumerable: true,
         value: this
       });
-    })
+    });
   }
 }
 

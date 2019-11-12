@@ -7,10 +7,11 @@
 
 ## App
 
-Genereic app class, the foundation of your application. It has only two functions:
+Genereic app class, the foundation of your application. It has only three functions:
 
 1. Manage settings for different environments.
 2. Load extensions
+3. Events
 
 ### Installation
 
@@ -23,10 +24,9 @@ Genereic app class, the foundation of your application. It has only two function
 
 ### Content
 
-* [App](https://github.com/matter-in-motion/mm/blob/master/docs/app.md)
-* [Settings](https://github.com/matter-in-motion/mm/blob/master/docs/settings.md)
-* [Units](https://github.com/matter-in-motion/mm/blob/master/docs/units.md)
-* Extensions
-
+- [App](https://github.com/matter-in-motion/mm/blob/master/docs/app.md)
+- [Settings](https://github.com/matter-in-motion/mm/blob/master/docs/settings.md)
+- [Units](https://github.com/matter-in-motion/mm/blob/master/docs/units.md)
+- Extensions
 
 License: MIT.

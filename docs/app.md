@@ -34,6 +34,22 @@ Calls the method of the unit with `args`. Example:
 
 `app.call('unit.method', 'arg1', 'arg2');`
 
+### Events
+
+The App uses Radix Tree for events look up so it is very fast. You can use `*` and `:placeholder` patterns. The last parameter in the handler will be all `placeholders` found in the path.
+
+#### on([prefixes], path, handler)
+
+Subscribe for the path. Prefixes can be omited.
+
+#### off([prefixes], path, handler)
+
+Unsubscribe from the path. Prefixes can be omited.
+
+#### emit(path, ...args)
+
+Emit the event with `...args`
+
 ### Life cycle
 
 All the hooks can be asyncronious. Just return a `Promise`.
@@ -44,7 +60,7 @@ All the hooks can be asyncronious. Just return a `Promise`.
 2. will start hooks
 3. willInit method
 4. will init hooks
-5. init             (get your dependencies here)
+5. init (get your dependencies here)
 6. did init hooks
 7. didInit method
 8. `start` event
@@ -58,3 +74,24 @@ All the hooks can be asyncronious. Just return a `Promise`.
 3. `stop` event
 4. did stop hooks
 5. didStop method
+
+The simple way to launch your app is:
+
+1. Create `bin/app`
+2. Put
+
+```js
+#!/usr/bin/env node
+'use strict';
+const App = require('<path to your app or "@matter-in-motion/app">');
+
+(async () => {
+  const app = new App();
+  await app.start();
+})();
+```
+
+3. `chmod +x bin/app`
+
+
+

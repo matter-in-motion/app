@@ -53,11 +53,29 @@ test('print units', async t => {
 test('checks all the lifecycle events', async t => {
   const app = new App();
   t.plan(3);
-  app.on('start', () => t.pass());
-  app.on('stop', () => t.pass());
+  const handler = () => t.pass();
+  app.on('app/started', handler);
+  app.on('app/stopped', handler);
   await app.start();
   await app.stop();
+  app.off('app/started', handler);
+  app.off('app/stopped', handler);
   t.pass();
+});
+
+test('on and off with prefixes', async t => {
+  t.plan(2);
+  const app = new App();
+
+  const message = 'test';
+  const handler = msg => t.is(msg, message);
+
+  app.on(['test1', 'test2'], '/message', handler);
+  app.emit('test1/message', message);
+  app.emit('test2/message', message);
+  app.off(['test1', 'test2'], '/message', handler);
+
+  await app.stop();
 });
 
 test('checks that init happens only once', async t => {
@@ -81,7 +99,7 @@ test('loads and inits extension from object', async t => {
   }
 
   const app = new App({
-    extensions: [ { extension: new Extension() } ]
+    extensions: [{ extension: new Extension() }]
   });
   await app.start();
 });
@@ -96,13 +114,13 @@ test('loads and inits extension from the function', async t => {
 
   const app = new App({
     extensions: [
-      (app => ({
+      app => ({
         extension: ({ app: unitsApp }) => {
           t.is(app.inited, false);
           t.is(app, unitsApp);
           return new Extension();
         }
-      }))
+      })
     ]
   });
   await app.start();
@@ -153,11 +171,11 @@ test('extends the app class the checks the run order', async t => {
   const app = new MyApp();
   app
     .on('start', () => t.is(stage, 'did init'))
-    .on('stop', () => t.is(stage, 'will stop'))
+    .on('stop', () => t.is(stage, 'will stop'));
 
   await app.start();
   await app.stop();
-})
+});
 
 test('calls the unit method', async t => {
   class Unit {
