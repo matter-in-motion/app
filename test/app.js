@@ -78,6 +78,23 @@ test('on and off with prefixes', async t => {
   await app.stop();
 });
 
+test('on and off faling pathes', async t => {
+  const app = new App();
+  await app.start();
+
+  const err1 = t.throws(() => {
+    app.on('/message');
+  });
+  t.is(err1.message, 'Handler should be a function but got undefined');
+
+  const err2 = t.throws(() => {
+    app.off('/message');
+  });
+  t.is(err2.message, 'Handler should be a function but got undefined');
+
+  await app.stop();
+});
+
 test('checks that init happens only once', async t => {
   let num = 0;
   const app = new App();
