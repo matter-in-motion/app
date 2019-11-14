@@ -11,7 +11,7 @@ Genereic app class, the foundation of your application. It has only three functi
 
 1. Manage settings for different environments.
 2. Load extensions
-3. Events
+3. Events managment
 
 ### Installation
 

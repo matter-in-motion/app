@@ -10,6 +10,8 @@ const Settings = require('./settings');
 
 class App {
   constructor(settings, env = process.env.NODE_ENV || 'development') {
+    hooks(this, 'init', 'start', 'stop', 'call');
+
     this.startTimestamp = Date.now();
     this.root = new Tree();
     this.handlers = new EventEmitter();
@@ -28,8 +30,6 @@ class App {
     this.setEnvironment(env);
     const { extensions, extensionPrefix } = this.require('settings');
     this.loadExtensions(extensions, extensionPrefix);
-
-    hooks(this, 'init', 'start', 'stop', 'call');
   }
 
   emit(path, ...args) {
@@ -84,6 +84,15 @@ class App {
 
   init() {} // for subclasses to implement
 
+  async start() {
+    await this.ensureInited();
+    this.emit('app/started');
+  }
+
+  stop() {
+    this.emit('app/stopped');
+  }
+
   setEnvironment(env) {
     this.environment = env;
     return this;
@@ -97,16 +106,6 @@ class App {
     this.inited = true;
     this.setDefaults();
     await this.units.init();
-  }
-
-  async start() {
-    await this.ensureInited();
-    this.emit('app/started');
-  }
-
-  stop() {
-    this.emit('app/stopped');
-    return this;
   }
 
   add(name, units) {
@@ -175,6 +174,11 @@ class App {
         value: this
       });
     });
+  }
+
+  exitWithCode(code, message) {
+    console.log(message);
+    process.exit(code);
   }
 }
 

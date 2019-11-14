@@ -24,7 +24,7 @@ Stops the app
 
 Return the units with the 'name'. If unit doesn't exists throw an error.
 
-#### add(units)
+#### add([name], units)
 
 Adds units to your app.
 
