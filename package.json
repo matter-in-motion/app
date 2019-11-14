@@ -1,6 +1,6 @@
 {
   "name": "@matter-in-motion/app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generic App. Has settings. Loads extensions.",
   "main": "index.js",
   "scripts": {
