@@ -1,4 +1,7 @@
 'use strict';
+
+require('dotenv').config();
+
 const path = require('path');
 const assert = require('assert');
 const EventEmitter = require('events');
