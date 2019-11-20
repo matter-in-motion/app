@@ -13,9 +13,10 @@ const Settings = require('./settings');
 
 class App {
   constructor(settings, env = process.env.NODE_ENV || 'development') {
+    this.startTimestamp = Date.now();
+
     hooks(this, 'init', 'start', 'stop', 'call');
 
-    this.startTimestamp = Date.now();
     this.root = new Tree();
     this.handlers = new EventEmitter();
 
@@ -118,6 +119,10 @@ class App {
 
   require(name) {
     return this.units.require(name);
+  }
+
+  get(name) {
+    return this.units.get(name);
   }
 
   call(command, ...args) {
